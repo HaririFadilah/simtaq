@@ -7,6 +7,9 @@ import path from 'path';
 
 export default defineConfig({
     plugins: [
+        build: ({
+            chunkSizeWarningLimit: 1600, // Menaikkan batas limit menjadi 1600kb
+        }),
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
