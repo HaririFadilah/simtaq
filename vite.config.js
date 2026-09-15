@@ -9,6 +9,21 @@ export default defineConfig({
     plugins: [
         build: ({
             chunkSizeWarningLimit: 1600, // Menaikkan batas limit menjadi 1600kb
+            // 2. Membagi file besar menjadi potongan kecil (Code Splitting)
+            rolldownOptions: {
+                output: {
+                    codeSplitting: {
+                        minSize: 30000,
+                        groups: [
+                            {
+                                name: 'vendor',
+                                test: /node_modules/,
+                            }
+                        ]
+                    }
+                }
+            }
+
         }),
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
