@@ -1,9 +1,93 @@
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import 'quasar/src/css/index.sass';
+@import '@quasar/extras/material-icons/material-icons.css';
+@import '@quasar/extras/animate/fadeIn.css';
+@import '@quasar/extras/animate/fadeOut.css';
+@import './sweetalert.css';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+:root {
+  --q-primary: #0D7C66;
+  --q-secondary: #006A67;
+  --q-accent: #14B8A6;
+  --q-dark: #111827;
+  --q-positive: #10B981;
+  --q-negative: #EF4444;
+  --q-info: #3B82F6;
+  --q-warning: #F59E0B;
+  --bg-main: #F4F7F6;
+  --card-bg: #FFFFFF;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  background-color: var(--bg-main);
+  color: #1F2937;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Mobile Adaptive Layout Specifics */
+@media (max-width: 768px) {
+  .mobile-bottom-nav-pad {
+    padding-bottom: 74px !important;
+  }
+}
+
+/* Dialog Form & Modal Standards */
+.dialog-form-card {
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+  background: #FFFFFF !important;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 5px;
+  line-height: 1.25;
+}
+
+.border-top {
+  border-top: 1px solid #E2E8F0 !important;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #E2E8F0 !important;
+}
+
+/* Polished Quasar Form Inputs */
+.q-field--outlined .q-field__control {
+  border-radius: 9px !important;
+  background-color: #FAFAFA;
+  transition: all 0.2s ease;
+}
+
+.q-field--outlined:hover .q-field__control {
+  background-color: #FFFFFF;
+}
+
+.q-field--outlined.q-field--focused .q-field__control {
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(13, 124, 102, 0.12) !important;
 }

@@ -1,0 +1,263 @@
+================================================================================
+           DOKUMEN ALUR SISTEM (SYSTEM FLOW & BUSINESS PROCESS)
+  SIMTAQ - SISTEM INFORMASI MANAJEMEN SANTRI & TAHFIZUL QUR'AN TERPADU
+                       YAYASAN AL MUKHLISIN
+================================================================================
+
+1. PENDAHULUAN & TUJUAN SISTEM
+--------------------------------------------------------------------------------
+SIMTAQ adalah platform tata kelola terintegrasi bagi Pondok Pesantren Tahfizul
+Qur'an Yayasan Al Mukhlisin. Sistem ini menghubungkan calon santri, wali murid,
+ustadz pembina, pengurus asrama (putra/putri), dan pimpinan yayasan ke dalam satu
+ekosistem digital berbasis Web & Progressive Web App (PWA).
+
+Fokus utama sistem:
+- Menghilangkan pencatatan manual berbasis kertas (paperless).
+- Transparansi dan akuntabilitas keuangan (Kas Induk Yayasan & Kas Asrama).
+- Pemantauan capaian target hafalan Qur'an secara presisi dan terukur.
+- Pengawasan kedisiplinan dan mutaba'ah ibadah yaumiyah santri.
+- Akses pendaftaran calon santri baru (PSB) secara mandiri bagi masyarakat.
+
+
+2. HAK AKSES PENGGUNA (ROLE-BASED ACCESS CONTROL / RBAC)
+--------------------------------------------------------------------------------
+Sistem membagi kewenangan ke dalam 4 peran internal dan 1 peran publik:
+
+[1] PENGURUS (SUPER ADMIN / YAYASAN)
+    - Akses penuh (Read, Create, Update, Delete) ke seluruh 10 modul sistem.
+    - Otoritas tunggal pengelolaan Keuangan Induk Yayasan & Dropping Dana.
+    - Otoritas pengelolaan akun pengguna (User Management).
+    - Otoritas konversi 1-klik Calon Santri PSB menjadi Santri Aktif.
+    - Dapat berpindah (switch) antara data Asrama Putra dan Putri.
+
+[2] USTADZ (MUSYRIF HALAQAH / PEMBINA TAHFIZ)
+    - Pengelolaan Data Santri, Target Hafalan, Setoran Harian (Ziyadah).
+    - Pencatatan Sima'an Muroja'ah per Juz dan Pengujian Evaluasi Akbar.
+    - Input Mutaba'ah Yaumiyah (Ibadah & Kedisiplinan santri di halaqah).
+    - Persetujuan (Approval) izin keluar/pulang santri.
+    - Cetak raport hafalan dan rekapitulasi santri.
+
+[3] KETUA ASRAMA PUTRA (AMIRUL MA'HAD IKHWAN)
+    - Terisolasi otomatis hanya dapat mengakses data santri Putra (Ikhwan).
+    - Pengelolaan Kas Operasional Asrama Putra (uang makan, kebersihan, listrik).
+    - Pencatatan perizinan dan mutaba'ah keasramaan santri putra.
+
+[4] KETUA ASRAMA PUTRI (AMIRAH ASRAMA AKHWAT)
+    - Terisolasi otomatis hanya dapat mengakses data santri Putri (Akhwat).
+    - Pengelolaan Kas Operasional Asrama Putri.
+    - Pencatatan perizinan dan mutaba'ah keasramaan santri putri.
+
+[5] PUBLIK (CALON SANTRI & WALI MURID)
+    - Mengakses portal publik (/pendaftaran) tanpa perlu login ke sistem.
+    - Mengisi formulir biodata pendaftaran santri baru secara mandiri.
+    - Memperoleh nomor pendaftaran unik (contoh: PSB-2026-001).
+    - Mengirim konfirmasi pendaftaran langsung ke WhatsApp panitia.
+    - Melacak status verifikasi seleksi secara realtime.
+
+
+3. DETAIL ALUR BISNIS UTAMA (BUSINESS WORKFLOW)
+--------------------------------------------------------------------------------
+
+================================================================================
+ALUR 1: SIKLUS PENERIMAAN SANTRI BARU (PSB) HINGGA SANTRI AKTIF
+================================================================================
+Tujuan: Mengakomodasi pendaftaran mandiri dari luar, seleksi panitia, hingga
+santri resmi terdaftar di database pondok beserta pembuatan data wali otomatis.
+
+Langkah-langkah:
+1. Akses Pendaftaran Mandiri:
+   - Wali murid membuka halaman publik (/pendaftaran) dari browser/HP.
+   - Mengisi Formulir: Data diri calon santri (nama, gender, TTL, asal sekolah)
+     dan Data Wali (nama wali, no. WhatsApp, domisili, motivasi).
+2. Penerbitan Nomor Registrasi:
+   - Sistem men-generate nomor registrasi unik (Format: PSB-YYYY-XXX).
+   - Wali menerima dialog sukses berisi nomor registrasi, tombol Salin Nomor,
+     tombol Kirim Konfirmasi ke WhatsApp Panitia, dan Cetak Bukti Registrasi.
+3. Verifikasi & Seleksi Berkas:
+   - Panitia PSB membuka modul Penerimaan Santri Baru pada SIMTAQ.
+   - Status awal pendaftar adalah "Diproses".
+   - Panitia melakukan tes tilawah/wawancara, lalu mengupdate status menjadi
+     "Diterima", "Cadangan", atau "Ditolak", disertai catatan hasil tes.
+   - Wali murid dapat memantau status kelulusan pada tab "Cek Status Seleksi".
+4. Konversi 1-Klik Menjadi Santri Aktif:
+   - Calon santri yang berstatus "Diterima" dapat dikonversi langsung oleh Pengurus
+     melalui tombol "Konversi ke Santri".
+   - Sistem secara otomatis:
+     a. Menerbitkan NIS (Nomor Induk Santri) resmi (Format: STQ-YYYY-XXX).
+     b. Memindahkan data calon santri ke tabel `santri` aktif.
+     c. Membuat profil wali santri otomatis di tabel `wali_santri`.
+     d. Menandai calon santri dengan flag `is_converted = true`.
+
+================================================================================
+ALUR 2: SIKLUS PEMBINAAN & PENCATATAN TAHFIZUL QUR'AN
+================================================================================
+Tujuan: Memastikan santri mencapai target hafalan (misal: 30 Juz) dengan
+metode berjenjang: Ziyadah (tambah hafalan), Muroja'ah (menjaga hafalan),
+dan Evaluasi Akbar (ujian kelipatan 5 juz).
+
+Langkah-langkah:
+1. Penentuan Target:
+   - Ustadz menetapkan target hafalan santri (misal: 30 Juz dalam 3 tahun).
+2. Setoran Harian (Ziyadah):
+   - Setiap pagi/ba'da Subuh, santri menyetorkan hafalan baru ke Ustadz.
+   - Ustadz menginput: Juz, Nama Surat, Rentang Ayat, dan Kualitas Hafalan
+     (Lancar / Kurang / Mengulang).
+   - Sistem memperbarui total capaian ayat dan halaman santri.
+3. Sima'an Muroja'ah (Penjagaan Hafalan):
+   - Santri memperdengarkan kembali hafalan per juz (misal: Juz 1 penuh).
+   - Ustadz mencatat tanggal sima'an, juz, rentang halaman, dan kelancaran.
+4. Ujian Evaluasi Akbar Kelipatan 5 Juz:
+   - Saat santri menyelesaikan kelipatan juz (Juz 1-5, 6-10, dst.), santri
+     menjalani Ujian Evaluasi Akbar di hadapan Dewan Penguji.
+   - Komponen penilaian:
+     * Nilai Kelancaran (bobot 40%)
+     * Nilai Makharijul Huruf (bobot 30%)
+     * Nilai Kaidah Tajwid (bobot 30%)
+   - Sistem menghitung Nilai Akhir Rata-rata dan menetapkan Predikat Mutu:
+     * Nilai >= 90 : Mumtaz (Istimewa)
+     * Nilai >= 80 : Jayyid Jiddan (Sangat Baik)
+     * Nilai >= 70 : Jayyid (Baik)
+     * Nilai >= 60 : Maqbul (Cukup)
+     * Nilai <  60 : Rosib (Mengulang)
+5. Pelaporan:
+   - Raport hafalan resmi siap dicetak kapan saja lengkap dengan Kop Surat
+     Yayasan dan tanda tangan Musyrif Tahfiz serta Pimpinan Pondok.
+
+================================================================================
+ALUR 3: SIKLUS MUTABA'AH YAUMIYAH & KEDISIPLINAN SANTRI
+================================================================================
+Tujuan: Membentuk karakter dan memonitoring ibadah harian santri di pondok.
+
+Langkah-langkah:
+1. Komponen Ibadah yang Dimutaba'ah:
+   - Shalat Fardhu Berjamaah 5 Waktu di Masjid.
+   - Shalat Sunnah Tahajjud / Qiyamul Lail.
+   - Shalat Dhuha.
+   - Dzikir Pagi & Petang (Al-Ma'tsurat).
+   - Adab, Kebersihan Kamar & Kedisiplinan Halaqah.
+2. Penilaian Harian:
+   - Ustadz/Musyrif mengisi mutaba'ah harian setiap santri dengan checklist status:
+     * Dilakukan Tepat Waktu (skor maksimal)
+     * Terlambat / Masbuq (skor menengah)
+     * Ditinggalkan Tanpa Udzur (skor 0)
+     * Berhalangan / Sakit (status udzur syar'i)
+3. Evaluasi Indeks Kepatuhan:
+   - Sistem menghitung Skor Mutaba'ah Harian (rentang 0 - 100).
+   - Dashboard menampilkan kartu peringatan "Perlu Pembinaan" jika skor < 60,
+     sehingga Ustadz pembina dapat memberikan bimbingan khusus.
+
+================================================================================
+ALUR 4: SIKLUS PERIZINAN KELUAR / PULANG ASRAMA
+================================================================================
+Tujuan: Menertibkan mobilitas santri dan memastikan keselamatan selama di luar asrama.
+
+Langkah-langkah:
+1. Pengajuan Izin:
+   - Permohonan diajukan dengan memilih Santri, Kategori Izin (Sakit/Keluarga/
+     Pendidikan/Darurat), Tanggal Keluar, Rencana Kembali, serta Penjemput.
+2. Proses Otorisasi:
+   - Ustadz atau Pengurus memeriksa alasan izin.
+   - Tindakan: "Disetujui" (Approved) atau "Ditolak" (Rejected).
+3. Santri Berada di Luar Asrama:
+   - Santri yang disetujui berstatus "Izin Aktif".
+   - Sistem mencatat durasi izin dan waktu tenggat kembali.
+4. Konfirmasi Kembali:
+   - Ketika santri kembali ke pondok, pembina menekan tombol "Konfirmasi Kembali".
+   - Status izin berubah menjadi "Selesai" dan santri kembali tercatat di asrama.
+
+================================================================================
+ALUR 5: SIKLUS KEUANGAN, DONASI & DROPPING KAS ASRAMA
+================================================================================
+Tujuan: Mengintegrasikan kas induk yayasan dengan kebutuhan operasional harian
+asrama santri dengan prinsip pemisahan wewenang yang tertib.
+
+Langkah-langkah:
+1. Penerimaan Dana Kas Induk Yayasan:
+   - Donasi / Infaq donatur dicatat pada modul Donasi atau Kas Induk.
+   - Penerimaan SPP, wakaf, dan operasional santri masuk ke saldo Kas Induk.
+2. Dropping Dana Otomatis ke Kas Asrama (Fitur Unggulan):
+   - Pengurus Yayasan mencatat transaksi pengeluaran di Buku Kas Induk.
+   - Pengurus mencentang: "Alokasikan sebagai dropping dana ke Kas Asrama"
+     dan memilih Asrama Tujuan: "Putra" atau "Putri".
+   - Sistem secara otomatis:
+     a. Mengurangi Saldo Kas Induk Yayasan.
+     b. Menambahkan Saldo Pemasukan di Kas Operasional Asrama yang dituju.
+     c. Mencatat log mutasi otomatis tanpa perlu entri ganda (double-entry).
+3. Belanja Operasional Harian Asrama:
+   - Ketua Asrama Putra / Putri mengelola kas belanja harian: bahan makanan/dapur,
+     kebersihan, perlengkapan santri sakit, token listrik, dan keperluan darurat.
+   - Saldo berjalan kas asrama diperbarui seketika (realtime).
+4. Penutupan Buku & Pertanggungjawaban:
+   - Buku Kas Induk dan Kas Asrama dapat diexport ke file Excel/CSV atau
+     dicetak resmi dengan lembar pengesahan Bendahara & Ketua Yayasan.
+
+================================================================================
+ALUR 6: SISTEM EXPORT DATA & CETAK LAPORAN DOKUMEN RESMI
+================================================================================
+Tujuan: Memenuhi kebutuhan administrasi yayasan, pelaporan dinas/kemenag,
+dan transparansi bagi wali santri dan donatur.
+
+Langkah-langkah:
+1. Export File Excel / CSV:
+   - Tersedia di halaman Santri, Hafalan, PSB, Kas Induk, dan Kas Asrama.
+   - File diunduh dalam format .csv terenkripsi UTF-8 BOM yang langsung rapi
+     saat dibuka di Microsoft Excel tanpa error karakter.
+2. Cetak Dokumen / Simpan PDF Resmi (Browser Print Engine):
+   - Setiap dokumen otomatis disusun dengan format standar kesekretariatan:
+     * Kop Surat Resmi Yayasan Al Mukhlisin lengkap dengan logo pondok.
+     * Alamat, kontak resmi, dan nomor registrasi lembaga.
+     * Garis pemisah kop surat ganda (double border).
+     * Judul Dokumen & Subtitle periode laporan.
+     * Kartu Indikator Statistik (Total Dana / Santri / Persentase).
+     * Tabel data rapi bergaris horizontal & vertikal.
+     * Blok Tanda Tangan Resmi (Kiri: Petugas pembuat, Kanan: Pimpinan/Yayasan).
+
+
+4. PETA STRUKTUR DIREKTORI KODE PROGRAM
+--------------------------------------------------------------------------------
+Frontend (Vue 3, Quasar, Pinia, Vite):
+├── resources/js/
+│   ├── layouts/
+│   │   └── MainLayout.vue           (Desktop drawer + Bottom nav mobile)
+│   ├── views/
+│   │   ├── DashboardView.vue        (KPI Yayasan, grafik tren, fullscreen loader)
+│   │   ├── SantriView.vue           (Master data santri, filter gender, cetak)
+│   │   ├── HafalanView.vue          (Ziyadah, Muroja'ah 1 juz, Evaluasi akbar)
+│   │   ├── MutabaahView.vue         (Checklist mutaba'ah yaumiyah harian)
+│   │   ├── PerizinanView.vue        (Pengajuan & approval izin santri)
+│   │   ├── PsbView.vue              (Panel seleksi berkas & konversi santri)
+│   │   ├── PublicPsbView.vue        (Formulir PSB mandiri & cek status publik)
+│   │   ├── KeuanganView.vue         (Kas Induk Yayasan, dropping dana asrama)
+│   │   ├── KasOperasionalView.vue   (Kas operasional harian asrama putra/putri)
+│   │   ├── DonasiView.vue           (Pencatatan donatur & penyaluran infaq)
+│   │   └── UsersView.vue            (Manajemen hak akses & akun pengguna)
+│   ├── utils/
+│   │   ├── export.js                (Engine Cetak Kop Surat & Export Excel/CSV)
+│   │   ├── api.js                   (Axios instance + bearer token interceptor)
+│   │   └── sweetalert.js            (Toast notifikasi & modal konfirmasi)
+│   └── stores/
+│       └── auth.js                  (State login, user profile, gender scope)
+
+Backend (Laravel 12, Sanctum, MySQL):
+├── app/Http/Controllers/Api/
+│   ├── AuthController.php           (Login, logout, profile)
+│   ├── DashboardController.php      (Statistik agregat & grafik mingguan)
+│   ├── SantriController.php         (CRUD santri & relasi asrama)
+│   ├── HafalanController.php        (Setoran, murojaah, evaluasi)
+│   ├── MutabaahController.php       (Pencatatan & rekap ibadah)
+│   ├── PerizinanController.php      (Status izin santri)
+│   ├── PsbController.php            (PSB internal & registrasi publik)
+│   ├── KeuanganController.php       (Kas induk & dropping dana)
+│   ├── KasOperasionalController.php (Kas harian asrama putra/putri)
+│   └── DonasiController.php         (Donatur & rekap donasi)
+└── routes/
+    └── api.php                      (Definisi endpoint terproteksi & endpoint publik)
+
+
+5. KESIMPULAN
+--------------------------------------------------------------------------------
+Sistem Informasi Manajemen Santri dan Tahfiz (SIMTAQ) telah dirancang menyeluruh,
+aman, dan siap pakai untuk mendukung operasional harian Pondok Pesantren Tahfizul
+Qur'an Yayasan Al Mukhlisin, mulai dari pendaftaran calon santri hingga pembukuan
+keuangan resmi pondok.
+================================================================================

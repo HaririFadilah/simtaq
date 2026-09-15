@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+/*
+|--------------------------------------------------------------------------
+| Web Routes - Single Page Application (SPA) entry point
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/{any}', function () {
+    return view('app');
+})->where('any', '.*');
