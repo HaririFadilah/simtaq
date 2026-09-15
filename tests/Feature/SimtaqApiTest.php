@@ -24,7 +24,7 @@ test('pengurus can login and access dashboard with financial summary', function 
     $dashResponse->assertStatus(200)
                  ->assertJsonPath('success', true)
                  ->assertJsonPath('data.top_metrics.santri.total', \App\Models\Santri::count())
-                 ->assertJsonPath('data.top_metrics.psb.total', 18)
+                 ->assertJsonPath('data.top_metrics.psb.total', \App\Models\CalonSantri::count())
                  ->assertJsonPath('data.ringkasan_keuangan.kas_yayasan', 48750000)
                  ->assertJsonPath('data.ringkasan_keuangan.kas_putra', 12350000)
                  ->assertJsonPath('data.ringkasan_keuangan.kas_putri', 10870000);

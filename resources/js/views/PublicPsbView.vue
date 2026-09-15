@@ -89,7 +89,7 @@
 
                   <div class="row q-col-gutter-md">
                     <div class="col-12 col-sm-8">
-                      <label class="text-caption text-weight-bold text-grey-8">Nama Lengkap Santri *</label>
+                      <label class="form-label">Nama Lengkap Santri *</label>
                       <q-input
                         v-model="form.nama_lengkap"
                         outlined
@@ -99,12 +99,12 @@
                       />
                     </div>
                     <div class="col-12 col-sm-4">
-                      <label class="text-caption text-weight-bold text-grey-8">Nama Panggilan</label>
+                      <label class="form-label">Nama Panggilan</label>
                       <q-input v-model="form.nama_panggilan" outlined dense placeholder="Nama akrab" />
                     </div>
 
                     <div class="col-12 col-sm-6">
-                      <label class="text-caption text-weight-bold text-grey-8">Jenis Kelamin *</label>
+                      <label class="form-label">Jenis Kelamin *</label>
                       <q-select
                         v-model="form.jenis_kelamin"
                         outlined
@@ -120,22 +120,22 @@
                     </div>
 
                     <div class="col-12 col-sm-6">
-                      <label class="text-caption text-weight-bold text-grey-8">Asal Sekolah Sebelumnya</label>
+                      <label class="form-label">Asal Sekolah Sebelumnya</label>
                       <q-input v-model="form.asal_sekolah" outlined dense placeholder="SDIT / MI / SMP / MTs..." />
                     </div>
 
                     <div class="col-12 col-sm-6">
-                      <label class="text-caption text-weight-bold text-grey-8">Tempat Lahir</label>
+                      <label class="form-label">Tempat Lahir</label>
                       <q-input v-model="form.tempat_lahir" outlined dense placeholder="Kota kelahiran" />
                     </div>
 
                     <div class="col-12 col-sm-6">
-                      <label class="text-caption text-weight-bold text-grey-8">Tanggal Lahir</label>
+                      <label class="form-label">Tanggal Lahir</label>
                       <q-input v-model="form.tanggal_lahir" type="date" outlined dense />
                     </div>
 
                     <div class="col-12">
-                      <label class="text-caption text-weight-bold text-grey-8">Asal Kota / Kabupaten Tempat Tinggal</label>
+                      <label class="form-label">Asal Kota / Kabupaten Tempat Tinggal</label>
                       <q-input v-model="form.asal_kota" outlined dense placeholder="Misal: Bandung, Jakarta Selatan, Bogor" />
                     </div>
                   </div>
@@ -151,7 +151,7 @@
 
                   <div class="row q-col-gutter-md">
                     <div class="col-12 col-sm-6">
-                      <label class="text-caption text-weight-bold text-grey-8">Nama Lengkap Wali *</label>
+                      <label class="form-label">Nama Lengkap Wali *</label>
                       <q-input
                         v-model="form.nama_wali"
                         outlined
@@ -162,7 +162,7 @@
                     </div>
 
                     <div class="col-12 col-sm-6">
-                      <label class="text-caption text-weight-bold text-grey-8">Nomor WhatsApp Aktif *</label>
+                      <label class="form-label">Nomor WhatsApp Aktif *</label>
                       <q-input
                         v-model="form.no_hp_wali"
                         outlined
@@ -181,7 +181,7 @@
                     </div>
 
                     <div class="col-12">
-                      <label class="text-caption text-weight-bold text-grey-8">Alamat Domisili Lengkap</label>
+                      <label class="form-label">Alamat Domisili Lengkap</label>
                       <q-input
                         v-model="form.alamat_wali"
                         type="textarea"
@@ -193,7 +193,7 @@
                     </div>
 
                     <div class="col-12">
-                      <label class="text-caption text-weight-bold text-grey-8">Motivasi Masuk Pondok / Catatan Khusus</label>
+                      <label class="form-label">Motivasi Masuk Pondok / Catatan Khusus</label>
                       <q-input
                         v-model="form.catatan_wali"
                         type="textarea"
